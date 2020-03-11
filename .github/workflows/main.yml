@@ -20,7 +20,7 @@ jobs:
       id: go
 
     - name: Set up NodeJs 10.x
-    - uses: actions/setup-node@v1
+      uses: actions/setup-node@v1
       with:
         node-version: '10.x'
         # Could be replaced with any other artifact repo like Artifactory 
