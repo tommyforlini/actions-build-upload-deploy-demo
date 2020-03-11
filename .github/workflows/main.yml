@@ -45,7 +45,7 @@ jobs:
     - name: Build React Static
       run: |
         cd ui; npm install; npm run build; cd -;
-        cp -R ui/build bin/
+        cp -R ui/build bin/static
 
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
