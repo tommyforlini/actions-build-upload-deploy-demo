@@ -19,6 +19,14 @@ jobs:
         go-version: 1.13
       id: go
 
+    - name: Set up NodeJs 10.x
+    - uses: actions/setup-node@v1
+    with:
+      node-version: '10.x'
+      # Could be replaced with any other artifact repo like Artifactory 
+      registry-url: 'https://registry.npmjs.org'
+    id: node
+
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
@@ -30,10 +38,14 @@ jobs:
             dep ensure
         fi
 
-    - name: Build
+    - name: Build Go Binary
       run: go build -o bin/myapi
-    - name: Build Static
-      run: cp -R static bin/
+
+
+    - name: Build React Static
+      run: |
+        cd ui; npm install; npm run build; cd -;
+        cp -R ui/build bin/
 
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
@@ -66,4 +78,5 @@ jobs:
       run: |
         #Call CLI
         echo "Its time todo this now!!"
+        ls -latr
         ./jfrog --version
