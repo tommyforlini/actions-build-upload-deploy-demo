@@ -1,0 +1,69 @@
+name: Go
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Get dependencies
+      run: |
+        go get -v -t -d ./...
+        if [ -f Gopkg.toml ]; then
+            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+            dep ensure
+        fi
+
+    - name: Build
+      run: go build -o bin/myapi
+    - name: Build Static
+      run: cp -R static bin/
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        # Artifact name
+        name: mySimpleGoMuxApp
+        # Directory containing files to upload
+        path: bin
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+
+    - name: Download artifact
+      uses: actions/download-artifact@v1.0.0
+      with:
+        # Artifact name
+        name: mySimpleGoMuxApp
+
+    - name: Get CLI
+      shell: bash
+      run: |
+        #Download any CLI (fake it with jfrog cli)
+        curl -fL https://getcli.jfrog.io | sh
+
+    - name: Execute CLI
+      shell: bash
+      run: |
+        #Call CLI
+        echo "Its time todo this now!!"
+        ./jfrog --version
